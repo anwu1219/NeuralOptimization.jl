@@ -13,13 +13,14 @@ class, network_file, center, input_file, delta_list, objective_variables, object
 The delta_list must be the length of the input (so that it can specify a hyperrectangle with different radius for
 each input
 =#
-function write_benchmark_file(class_string, network_files, input_files, objective_function, deltas, maximize, output_file, append_output=false)
+function write_benchmark_file(class_string, network_files, input_files, objective_functions, deltas, maximize, output_file, append_output=false)
     # Make the path to your output file if it doesnt exist
+    println(output_file)
     mkpath(dirname(output_file))
     first_loop = true
 
     for network_file in network_files
-        for (input_file, objective) in zip(input_files, objectives)
+        for (input_file, objective_function) in zip(input_files, objective_functions)
             for delta_list in deltas
                 # Write the current setup to the output file
                 # with this setup, we'll append if the append_output
@@ -28,13 +29,20 @@ function write_benchmark_file(class_string, network_files, input_files, objectiv
                 first_loop = false
                 open(output_file, file_mode) do f
                     # Writeout each column separated by a comma
+                    # for each of the lists, we replace their commas and remove all spaces 
+                    delta_list_string = replace(string(delta_list), ","=>comma_replacement)
+                    delta_list_string = replace(delta_list_string, " "=>"")
+                    objective_variables_string = replace(string(objective_function.variables), ","=>comma_replacement)
+                    objective_variables_string = replace(objective_variables_string, " "=>"")
+                    objective_coefficients_string = replace(string(objective_function.coefficients), ","=>comma_replacement)
+                    objective_coefficients_string = replace(objective_coefficients_string, " "=>"")
                     write(f,
                           class_string, ",",
                           network_file, ",",
                           input_file, ",",
-                          replace(string(delta_list), ","=>comma_replacement), ",",
-                          replace(string(objective_function.variables), ","=>comma_replacement), ",",
-                          replace(string(objective_function.coefficients), ","=>comma_replacement), ",",
+                          delta_list_string, ",",
+                          objective_variables_string, ",",
+                          objective_coefficients_string, ",",
                           maximize ? "maximize" : "minimize", "\n"
                           )
                     close(f)
@@ -92,7 +100,7 @@ function write_query_file(benchmark_file, optimizer_file, query_result_path, out
         query_parts[5] = basename(query_parts[5])[1:end-4] # TODO: Make this more rigorous - find the input file basename to use in our output file, remove file extension
         query_parts[6] = split(query_parts[6][2:end], comma_replacement)[1] # TODO: How to deal with names of deltas? replace list of deltas with the first delta for now
         deleteat!(query_parts, [2]) # remove optimizer full description from filename, can use the optimizer name
-        query_output_filename = string(query_result_path, join(query_parts, "-"), ".csv")
+        query_output_filename = string(query_result_path, join(query_parts, "-"))
 
         open(output_file, file_mode) do f
             write(f, cur_query, ",", query_output_filename, "\n")
@@ -105,15 +113,17 @@ end
 class_string = "MNIST"
 network_files = ["/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Networks/MNIST/mnist10x10.nnet", "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Networks/MNIST/mnist10x20.nnet"]
 input_files =["/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy", "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy"]
-objective = NeuralOptimization.LinearObjective([1.0, -1.0], [1, 3]) # objective is to just maximize the first output
+objective_one = NeuralOptimization.LinearObjective([1.0, -1.0], [1, 3]) # objective is to just maximize the first output
+objective_two = NeuralOptimization.LinearObjective([1.0, -1.0], [2, 3]) # objective is to just maximize the first output
+objective_functions = [objective_one, objective_two]
 
 deltas = [.001 * ones(784), 0.0005 * ones(784)] # both hypercubes for now
 maximize = true
-output_file_benchmark = "/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_benchmark.csv"
+output_file_benchmark = "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_benchmark.csv"
 append_to_file = false
 
-println(objective)
-write_benchmark_file(class_string, network_files, input_files, objective, deltas, maximize, output_file_benchmark, append_to_file)
+println(string.(objective_functions))
+write_benchmark_file(class_string, network_files, input_files, objective_functions, deltas, maximize, output_file_benchmark, append_to_file)
 
 
 ### Write an optimizer file
