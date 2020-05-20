@@ -22,6 +22,7 @@ import time
 import sys
 import numpy as np
 import copy
+sys.path.append("/barrett/scratch/haozewu/Optimization/Marabou")
 from maraboupy import Marabou
 from maraboupy import MarabouCore
 from maraboupy import MarabouUtils
