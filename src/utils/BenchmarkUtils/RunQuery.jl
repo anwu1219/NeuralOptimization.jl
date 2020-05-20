@@ -1,4 +1,4 @@
-include("../../NeuralOptimization.jl")
+include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/NeuralOptimization.jl")
 using NPZ
 using LazySets
 #=
