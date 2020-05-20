@@ -103,8 +103,8 @@ end
 
 ### Write a benchmark file
 class_string = "MNIST"
-network_files = ["/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/Networks/MNIST/mnist10x10.nnet", "/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/Networks/MNIST/mnist10x20.nnet"]
-input_files =["/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy", "/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy"]
+network_files = ["/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Networks/MNIST/mnist10x10.nnet", "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Networks/MNIST/mnist10x20.nnet"]
+input_files =["/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy", "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/Datasets/MNIST/MNISTlabel_0_index_0_.npy"]
 objective = NeuralOptimization.LinearObjective([1.0, -1.0], [1, 3]) # objective is to just maximize the first output
 
 deltas = [.001 * ones(784), 0.0005 * ones(784)] # both hypercubes for now
@@ -117,7 +117,7 @@ write_benchmark_file(class_string, network_files, input_files, objective, deltas
 
 
 ### Write an optimizer file
-output_file_optimizers = "/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_optimizers.csv"
+output_file_optimizers = "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_optimizers.csv"
 append_to_file = false
 optimizers = [
               LBFGS_optimizer,
@@ -161,6 +161,6 @@ write_optimizer_file(optimizer_names, optimizers, output_file_optimizers, append
 append_output = false
 benchmark_file = output_file_benchmark
 optimizer_file = output_file_optimizers
-output_file_query ="/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_queries.csv"
-query_result_path = "/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/results/"
+output_file_query ="/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_queries.csv"
+query_result_path = "/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/results/"
 write_query_file(benchmark_file, optimizer_file, query_result_path, output_file_query, append_output)

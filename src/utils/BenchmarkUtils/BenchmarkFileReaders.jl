@@ -15,11 +15,11 @@ function run_query_file(query_file)
         args = split(query, ",")
         # 11 args
         # optimizer_name,  optimizer, class, network_file, input_file, delta, objective_variables, objective_coefficients, maximize, query_output_filename, timeout
-        mycommand = `julia ./src/utils/BenchmarkUtils/RunQuery.jl $(args[1]) $(args[2]) $(args[3]) $(args[4]) $(args[5]) $(args[6]) $(args[7]) $(args[8]) $(args[9]) $(args[10]) 60`
+        mycommand = `julia /barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/BenchmarkUtils/RunQuery.jl $(args[1]) $(args[2]) $(args[3]) $(args[4]) $(args[5]) $(args[6]) $(args[7]) $(args[8]) $(args[9]) $(args[10]) 60`
         run(mycommand)
     end
 end
 
 
-query_file ="/Users/cstrong/Desktop/Stanford/Research/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_queries.csv"
+query_file ="/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/BenchmarkOutput/benchmark_files/test_queries.csv"
 run_query_file(query_file)
