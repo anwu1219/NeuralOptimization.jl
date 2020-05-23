@@ -26,7 +26,7 @@ end
 
 function optimize(solver::VanillaMIP, problem::OutputOptimizationProblem, time_limit::Int = 1200)
     @debug string("Optimizing with: ", solver)
-    model = Model(solver)
+    model = model_creator(solver)
     neurons = init_neurons(model, problem.network)
     deltas = init_deltas(model, problem.network)
     objective = problem.objective

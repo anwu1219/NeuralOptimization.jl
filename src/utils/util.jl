@@ -184,12 +184,14 @@ function parse_optimizer(optimizer_string)
         threads_string = split(chunks[3], "=")[2]
         m_string = split(chunks[4], "=")[2]
         @assert backend_optimizer_string == "Gurobi.Optimizer" || backend_optimizer_string == "GLPK.Optimizer"
-        if backend_optimizer_string == "Gurobi.optimizer"
-            backend = Gurobi.Optimizer
+        if backend_optimizer_string == "Gurobi.Optimizer"
+            println("Parsed Gurobi optimizer")
+	    backend = Gurobi.Optimizer
             threads = parse(Int, threads_string)
             m = parse(Float32, m_string)
             return NeuralOptimization.Sherlock(optimizer=backend, threads=threads, m=m)
         else
+	    println("Parsed GLPK optimizer")
             backend = GLPK.Optimizer
             m = parse(Float32, m_string)
             return NeuralOptimization.Sherlock(optimizer=backend, m=m)
@@ -199,7 +201,7 @@ function parse_optimizer(optimizer_string)
         threads_string = split(chunks[3], "=")[2]
         m_string = split(chunks[4], "=")[2]
         @assert backend_optimizer_string == "Gurobi.Optimizer" || backend_optimizer_string == "GLPK.Optimizer"
-        if backend_optimizer_string == "Gurobi.optimizer"
+        if backend_optimizer_string == "Gurobi.Optimizer"
             backend = Gurobi.Optimizer
             threads = parse(Int, threads_string)
             m = parse(Float32, m_string)

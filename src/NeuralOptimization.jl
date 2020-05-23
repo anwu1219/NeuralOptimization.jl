@@ -29,9 +29,9 @@ from maraboupy import MarabouUtils
 """
 
 # We have to pin an old version of Flux to get it to work with Adversarial.jl
-Pkg.free("Flux")
-Pkg.add(Pkg.PackageSpec(name="Flux", version="0.8.3"))
-Pkg.pin(Pkg.PackageSpec(name="Flux", version="0.8.3"))
+#Pkg.free("Flux")
+#Pkg.add(Pkg.PackageSpec(name="Flux", version="0.8.3"))
+#Pkg.pin(Pkg.PackageSpec(name="Flux", version="0.8.3"))
 using Flux;
 
 Pkg.add(Pkg.PackageSpec(url="https://github.com/jaypmorgan/Adversarial.jl.git")); # Adversarial.jl
@@ -42,6 +42,8 @@ import LazySets: dim, HalfSpace # necessary to avoid conflict with Polyhedra
 
 # For optimization methods:
 import JuMP.MOI.OPTIMAL, JuMP.MOI.INFEASIBLE, JuMP.MOI.TIME_LIMIT
+
+println("Running neural optimization")
 
 # TODO: What should this be like long term? want to have a clean process
 # of specifying things but they're not supported by all optimizers
@@ -57,18 +59,17 @@ function model_creator(solver)
         return Model(with_optimizer(solver.optimizer))
     end
 end
-JuMP.Model(solver) = model_creator(solver)
 
 JuMP.value(vars::Vector{VariableRef}) = value.(vars)
 
 # Include utils that help to define the networks and problems
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/activation.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/network.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/problem.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/util.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/variables.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/objectives.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/utils/constraints.jl")
+include("utils/activation.jl")
+include("utils/network.jl")
+include("utils/problem.jl")
+include("utils/util.jl")
+include("utils/variables.jl")
+include("utils/objectives.jl")
+include("utils/constraints.jl")
 
 # To help with printouts
 macro Name(arg)
@@ -93,15 +94,16 @@ export
     compute_gradient,
     forward_network,
     optimize,
-    read_nnet
+    read_nnet,
+    model_creator
 
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/approximate/LBFGS.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/approximate/FGSM.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/approximate/PGD.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/exact/VanillaMIP.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/exact/Sherlock.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/exact/Marabou.jl")
-include("/barrett/scratch/haozewu/Optimization/NeuralOptimization.jl/src/exact/MarabouBinarySearch.jl")
+include("approximate/LBFGS.jl")
+include("approximate/FGSM.jl")
+include("approximate/PGD.jl")
+include("exact/VanillaMIP.jl")
+include("exact/Sherlock.jl")
+include("exact/Marabou.jl")
+include("exact/MarabouBinarySearch.jl")
 
 
 export LBFGS

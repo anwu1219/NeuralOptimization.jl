@@ -35,6 +35,7 @@ function optimize(solver::Sherlock, problem::OutputOptimizationProblem, time_lim
     @debug string("Optimizing with: ", solver)
     @assert problem.input isa Hyperrectangle # Bc haven't implemented sample with polytopes
     start_time = time()
+    println("Starting sherlock with optimizer:", solver.optimizer)
 
     # Augment the network to handle an arbitrary linear objective
     # if the last layer was ID() then this just combines the objective into that layer
@@ -64,7 +65,6 @@ function optimize(solver::Sherlock, problem::OutputOptimizationProblem, time_lim
 end
 
 function output_bound(solver::Sherlock, problem::OutputOptimizationProblem, type::Symbol, start_time::Float64, time_limit::Int)
-    opt = solver.optimizer
     x = sample(problem.input)
     while true
         (x, bound) = local_search(solver, problem, x, type, start_time, time_limit)
@@ -92,7 +92,9 @@ function local_search(solver::Sherlock, problem::OutputOptimizationProblem, x::V
     nnet = problem.network
     act_pattern = get_activation(nnet, x)
     gradient = get_gradient(nnet, x)
-    model = Model(solver)
+    println("In local search about to create model with solver: ", solver)
+    model = model_creator(solver)
+    println("after created model in local search")
     neurons = init_neurons(model, nnet)
     add_set_constraint!(model, problem.input, first(neurons))
     encode_network!(model, nnet, neurons, act_pattern, StandardLP())
@@ -127,7 +129,8 @@ function global_search(solver::Sherlock, problem::OutputOptimizationProblem, bou
 end
 
 function ns_verify(solver::Sherlock, network, input_set, output_set, start_time::Float64, time_limit::Int)
-    model = Model(solver)
+    println("In ns verify about to make model with solver: ", solver)
+    model = model_creator(solver)
     neurons = init_neurons(model, network)
     deltas = init_deltas(model, network)
     add_set_constraint!(model, input_set, first(neurons))
